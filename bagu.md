@@ -57,7 +57,7 @@
 
 1. Precision / Recall / $F_1$ Score
 
-    对于二分类问题，我们常常使用精确率(Precision)、召回率(Recall)以及$F_1$ Score来评估二分类模型的性能。对于一个二分类器，在数据集上的预测情况可以分为以下4种：
+    对于二分类问题，我们常常使用精确率(Precision)、召回率(Recall)以及 $F_1$ Score来评估二分类模型的性能。对于一个二分类器，在数据集上的预测情况可以分为以下4种：
 
     - TP(True Positive)，将正类**正确**预测为正类；
     - TN(True Negative)，将负类**正确**预测为负类；
@@ -67,23 +67,15 @@
     有了以上概念，我们可以给出以下评估指标的定义：
 
     - 精确率定义为：
-        $$
-            P=\frac{TP}{TP+FP}
-        $$
+        $$P=\frac{TP}{TP+FP}$$
         即在模型**预测为正类**的样本中，预测正确的比例。可以看到，精确率更加关注于模型认为是正类样本的结果。
     - 召回率定义为：
-        $$
-            R=\frac{TP}{TP+FN}
-        $$
+        $$R=\frac{TP}{TP+FN}$$
         即在正类的样本中，模型预测正确的比例。相比之下，召回率更加关注于那些**真实值为正类**的样本。
-    - 此外，$F_1$ 值定义为精确率与召回率的调和均值，即
-        $$
-            \frac{2}{F_1}=\frac{1}{P}+\frac{1}{R}
-        $$
-        $$
-            F_1 = \frac{2 \times P \times R}{P + R} = \frac{2TP}{2TP+FP+FN}
-        $$
-        当精确率和召回率都高时，$F_1$ 值也会高。
+    - 此外， $F_1$ 值定义为精确率与召回率的调和均值，即
+        $$\frac{2}{F_1}=\frac{1}{P}+\frac{1}{R}$$
+        $$F_1 = \frac{2 \times P \times R}{P + R} = \frac{2TP}{2TP+FP+FN}$$
+        当精确率和召回率都高时， $F_1$ 值也会高。
 
 2. 混淆矩阵 Confusion Matrix
 
@@ -91,40 +83,30 @@
 
     ![ConfusionMatrix](imgs/ConfusionMatrix.jpg)
 
-3. macro-$F_1$ vs micro-$F_1$
+3. macro- $F_1$ vs micro- $F_1$
 
     很多时候我们有多个二分类混淆矩阵（例如多次训练与测试 / 多个数据集 / 多分类任务中每两两类别的组合等），这是我们希望在 $n$ 个二分类混淆矩阵上综合考察模型性能。
 
-    - macro-$F_1$
+    - macro- $F_1$ 
 
-        一种直接的做法是直接计算各个混淆矩阵的精确率和召回率，再计算平均值，分别得到 macro-$P$、macro-$R$和对应的macro-$F_1$. 
-        $$
-            \text{macro-}P = \frac{1}{n}\sum_{i=1}^n P_i, \qquad
-            \text{macro-}R = \frac{1}{n}\sum_{i=1}^n R_i,
-        $$
-        $$
-            \text{macro-}F_1 = \frac{2 \times \text{macro-}P \times \text{macro-}R}{\text{macro-}P + \text{macro-}R}
-        $$
+        一种直接的做法是直接计算各个混淆矩阵的精确率和召回率，再计算平均值，分别得到 macro- $P$ 、macro- $R$ 和对应的macro- $F_1$ . 
+        $$\text{macro-}P = \frac{1}{n}\sum_{i=1}^n P_i, \qquad
+            \text{macro-}R = \frac{1}{n}\sum_{i=1}^n R_i,$$
+        $$\text{macro-}F_1 = \frac{2 \times \text{macro-}P \times \text{macro-}R}{\text{macro-}P + \text{macro-}R}$$
     
-    - micro-$F_1$
+    - micro- $F_1$ 
 
-        另一种做法是先将各个混淆矩阵的对应元素进行平均，得到$\overline{TP}$、$\overline{TN}$、$\overline{FP}$和$\overline{FN}$，再基于这些值计算出micro-$P$、micro-$R$和对应的micro-$F_1$. 
-        $$
-            \text{micro-}P = \frac{\overline{TP}}{\overline{TP}+\overline{FP}}, \qquad
-            \text{micro-}R = \frac{\overline{TP}}{\overline{TP}+\overline{FN}},
-        $$
-        $$
-            \text{micro-}F_1 = \frac{2 \times \text{micro-}P \times \text{micro-}R}{\text{micro-}P + \text{micro-}R}
-        $$
+        另一种做法是先将各个混淆矩阵的对应元素进行平均，得到 $\overline{TP}$ 、 $\overline{TN}$ 、 $\overline{FP}$ 和 $\overline{FN}$ ，再基于这些值计算出micro- $P$ 、micro- $R$ 和对应的micro- $F_1$ . 
+        $$\text{micro-}P = \frac{\overline{TP}}{\overline{TP}+\overline{FP}}, \qquad
+            \text{micro-}R = \frac{\overline{TP}}{\overline{TP}+\overline{FN}},$$
+        $$\text{micro-}F_1 = \frac{2 \times \text{micro-}P \times \text{micro-}R}{\text{micro-}P + \text{micro-}R}$$
 
 4. ROC 曲线 / AUC 面积
 
     ROC 曲线(Receiver Operating Characteristic)与 AUC (Area Under ROC Curve)是面对**不平衡分类问题**时最常用的评估指标。要了解 ROC 是什么，首先我们根据混淆矩阵再定义两个指标：True Positive Rate(TPR) 以及 False Positive Rate(FPR). 
 
-    $$
-        TPR = R = \frac{TP}{TP+FN}, \qquad
-        FPR = \frac{FP}{TN+FP},
-    $$
+    $$TPR = R = \frac{TP}{TP+FN}, \qquad
+        FPR = \frac{FP}{TN+FP},$$
     正常来说，一个好的模型应该满足高 TPR 和低 FPR。对于任意一个训练好的模型，在给定测试数据上我们都能计算出它的 TPR 和 FPR。以 FPR 为横坐标，TPR 为纵坐标，我们可以将任意模型的一对 (FPR, TPR) 画在该坐标图中，如下图所示。同时我们将由该坐标轴构成的空间称为 ROC 空间。图1中假设有 A、B、C、D、E 共计五个模型。在 ROC 空间中，模型越靠近左上角，表明模型效果越好。
 
     ![ROC_01](imgs/ROC_01.png)
