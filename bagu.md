@@ -122,23 +122,19 @@
 
     对于一个优化问题，如果其目标函数是**凸函数**，且可行域是**凸集**（集合中任意两点连线上的任意点都在集合内），那么它就是一个凸优化问题。
     
-    定义域 $\mathbb{D}$ 是一个凸集的函数 $f$ 是凸函数，当且仅当对于任意的 $x,y \in \mathbb{D}$ 和 $\theta \in [0,1]$，都有：
+    定义域 $\mathbb{D}$ 是一个凸集的函数 $f$ 是凸函数，当且仅当对于任意的 $x,y \in \mathbb{D}$ 和 $\theta \in [0,1]$ ，都有：
 
-    $$
-        f(\theta x+(1-\theta)y) \le \theta f(x)+(1-\theta) f(y)
-    $$
+    $$f(\theta x+(1-\theta)y) \le \theta f(x)+(1-\theta) f(y)$$
 
-    ![convex_func](imgs/convex_func.jpg)
+![convex_func](imgs/convex_func.jpg)
 
-    数学中强调凸优化问题的重要性，在于凸优化问题的**局部最优解**必然也是其**全局最优解**。这个特性使得我们可以使用贪心算法、梯度下降法、牛顿法等方法来求解凸优化问题。事实上，我们求解许多非凸优化问题，也是通过将其拆解为若干个凸优化问题，再分别进行求解。
+数学中强调凸优化问题的重要性，在于凸优化问题的**局部最优解**必然也是其**全局最优解**。这个特性使得我们可以使用贪心算法、梯度下降法、牛顿法等方法来求解凸优化问题。事实上，我们求解许多非凸优化问题，也是通过将其拆解为若干个凸优化问题，再分别进行求解。
 
 2. MSE / MSELoss
 
     均方误差 (Mean Square Error, MSE)，是回归任务中最常见的度量指标。
 
-    $$
-        E(f;D)=\sum_{i=1}^m (f(x_i) - y_i)^2
-    $$
+    $$E(f;D)=\sum_{i=1}^m (f(x_i) - y_i)^2$$
 
 3. 以 MSELoss 为损失函数的逻辑回归是凸优化问题吗？
 
@@ -151,98 +147,66 @@
 
     - 最小二乘法以预测值和真实值的平方和作为损失函数 (MSELoss)。
 
-        $$
-            J(w)=\sum_{i=1}^m (h_w(x_i) - y_i)^2
-        $$
+        $$J(w)=\sum_{i=1}^m (h_w(x_i) - y_i)^2$$
 
-    - 最大似然估计在已知 $x$ 与 $y$ 的情况下，以**概率最大**的角度，估计模型可能性最大的参数 $h_w$。设误差 $\epsilon_i = y_i - h_w(x_i)$， 由于 $\epsilon_i$ 符合高斯分布，可得概率密度函数：
+    - 最大似然估计在已知 $x$ 与 $y$ 的情况下，以**概率最大**的角度，估计模型可能性最大的参数 $h_w$。设误差 $\epsilon_i = y_i - h_w(x_i)$ ， 由于 $\epsilon_i$ 符合高斯分布，可得概率密度函数：
         
-        $$
-            p(\epsilon_i) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(\epsilon_i)^2}{2\sigma^2}}
-        $$
+        $$p(\epsilon_i) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(\epsilon_i)^2}{2\sigma^2}}$$
 
         将 $\epsilon_i = y_i - h_w(x_i)$ 代入，可得：
 
-        $$
-            p(y_i | h_w(x_i)) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y_i - h_w(x_i))^2}{2\sigma^2}}
-        $$
+        $$p(y_i | h_w(x_i)) = \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y_i - h_w(x_i))^2}{2\sigma^2}}$$
 
         则似然函数公式如下：
 
-        $$
-            \begin{aligned}
-                L(h_w(x_i)) &= \prod_{i=1}^m p(y_i | h_w(x_i))\\
-                &= \prod_{i=1}^m \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y_i - h_w(x_i))^2}{2\sigma^2}} \\
-            \end{aligned}
-        $$
+        $$L(h_w(x_i)) = \prod_{i=1}^m p(y_i | h_w(x_i))\\
+              = \prod_{i=1}^m \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y_i - h_w(x_i))^2}{2\sigma^2}}$$
 
         等号两边取对数，不影响函数的极值点。
 
-        $$
-            \begin{aligned}
-                \log L(h_w(x_i)) &= \sum_{i=1}^m \log \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y_i - h_w(x_i))^2}{2\sigma^2}}\\
-                &= m \log \frac{1}{\sigma \sqrt{2\pi}} - \frac{1}{2\sigma^2} \sum_{i=1}^m (y_i - h_w(x_i))^2
-            \end{aligned}
-        $$
+        $$\log L(h_w(x_i)) = \sum_{i=1}^m \log \frac{1}{\sigma \sqrt{2\pi}} e^{-\frac{(y_i - h_w(x_i))^2}{2\sigma^2}}\\
+                = m \log \frac{1}{\sigma \sqrt{2\pi}} - \frac{1}{2\sigma^2} \sum_{i=1}^m (y_i - h_w(x_i))^2$$
 
-        我们知道 $h_w(x)$ 是关于权重 $w$ 的函数，不妨设为 $l(w)$。因此有：
+        我们知道 $h_w(x)$ 是关于权重 $w$ 的函数，不妨设为 $l(w)$ 。因此有：
             
-        $$
-            \begin{aligned}
-                l(w) = m \log \frac{1}{\sigma \sqrt{2\pi}} - \frac{1}{2\sigma^2} \sum_{i=1}^m (y_i - h_w(x_i))^2
-            \end{aligned}
-        $$
+        $$l(w) = m \log \frac{1}{\sigma \sqrt{2\pi}} - \frac{1}{2\sigma^2} \sum_{i=1}^m (y_i - h_w(x_i))^2$$
 
         去除前面的常数项和常数系数，可以看到与最小二乘法的的公式一致，之后求解过程同最小二乘法。因此得出结论，最小二乘法与最大似然估计从两个不同的角度出发，得到一致的结果。
 
 5. 相对熵与交叉熵 Ralative-Entropy / Cross-Entropy
 
-    我们常用**信息量**来量化数据中的信息。设事件 $x_0$ 发生的概率为 $p(x_0)$，则其信息量为：
+    我们常用**信息量**来量化数据中的信息。设事件 $x_0$ 发生的概率为 $p(x_0)$ ，则其信息量为：
 
-    $$
-        I(x_0) = -\log p(x_0)
-    $$
+    $$I(x_0) = -\log p(x_0)$$
 
     **熵** (Entropy) 被用来度量一个系统的混乱程度，代表一个系统中所有事件信息量的期望。熵越大，该系统的不确定性也越大。
 
-    $$
-        H(X) = -\sum_{x \in X}p(x_i) \log p(x_i)
-    $$
+    $$H(X) = -\sum_{x \in X}p(x_i) \log p(x_i)$$
 
     **相对熵** (Ralative Entropy)，又称 **KL 散度** (Kullback-Leibler Divergence)，是两个随机分布 $p$ 与 $q$ 之间的对数差值的期望。
 
-    $$
-        D_{KL}(p||q)=\sum_{x\in X} p(x)\log\frac{p(x)}{q(x)}=-\sum_{x\in X} p(x)[\log q(x) - \log p(x)]
-    $$
+    $$D_{KL}(p||q)=\sum_{x\in X} p(x)\log\frac{p(x)}{q(x)}=-\sum_{x\in X} p(x)[\log q(x) - \log p(x)]$$
 
     **交叉熵** (Cross-Entropy)，与 KL 散度类似，是两个随机分布 $p$ 与 $q$ 之间距离的另一种度量。
 
-    $$
-        CEH(p,q)=−\sum_{x \in X}p(x)logq(x)
-    $$
+    $$CEH(p,q)=−\sum_{x \in X}p(x)logq(x)$$
 
     > **为何在机器学习中常使用交叉熵而不是 KL 散度作为损失函数？**
     >
     > 可以看到，相对熵、交叉熵之间存在以下关系：
     > 
-    >    $$
-    >       D_{KL}(p||q) = CEH(p,q) - H(p)
-    >    $$
+    >    $$D_{KL}(p||q) = CEH(p,q) - H(p)$$
     >    
-    > 在机器学习中，可以将 $p$ 看作真实分布，$q$ 为预测分布。则当 $p$ 的分布已知时，$H(p)$ 为常数，交叉熵与 KL 散度等价。
+    > 在机器学习中，可以将 $p$ 看作真实分布， $q$ 为预测分布。则当 $p$ 的分布已知时， $H(p)$ 为常数，交叉熵与 KL 散度等价。
 
 
     ***在分类问题中***，常使用交叉熵作为损失函数，公式表达如下：
 
     * 二分类问题中，交叉熵损失函数为:
-        $$
-            L = -\frac{1}{N} \sum_i [y_i \log(p_i) + (1 - y_i) \log (1 - p_i)]
-        $$
+        $$L = -\frac{1}{N} \sum_i [y_i \log(p_i) + (1 - y_i) \log (1 - p_i)]$$
     * 多分类问题中，交叉熵损失函数为：
-        $$
-            L = -\frac{1}{N} \sum_i \sum_c^M [y_{ic} \log (p_{ic})]
-        $$
-        其中，$M$ 为类别数量。
+        $$L = -\frac{1}{N} \sum_i \sum_c^M [y_{ic} \log (p_{ic})]$$
+        其中， $M$ 为类别数量。
 
 
 ### 朴素贝叶斯 Naive Bayes
