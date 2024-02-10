@@ -822,12 +822,8 @@ Seq2Seq 中的 Attention 机制是在 decode 过程中，逐步计算对应的�
 由于 Transformer 模型没有循环结构或卷积结构，为了使模型能够学习到输入序列的顺序，我们需要插入一些关于 tokens 位置的信息。因此提出了 **Positional Encoding** 的概念，其与 input embedding 具有相同的维度，便于相加。
 
 但是，如果直接使用计数的方式来进行 encoding，即 $pos = 1, 2, ..., n - 1$，那么最后一个 token 的encoding 将会比第一个 token 大很多，与原 embedding 相加后会造成数据不平衡的现象。原论文作者们的方法是使用了不同频率的正弦和余弦函数来作为位置编码：
-        $$
-            \begin{aligned}
-                PE_{(pos,2i)}   & = sin(pos/10000^{2i/d_{model}}) \\
-                PE_{(pos,2i+1)} & = cos(pos/10000^{2i/d_{model}}) \\
-            \end{aligned}
-        $$
+$$PE_{(pos,2i)}  = sin(pos/10000^{2i/d_{model}})$$
+$$PE_{(pos,2i+1)} = cos(pos/10000^{2i/d_{model}})$$
 
         ```python
         def get_positional_embedding(d_model, max_seq_len):
@@ -896,7 +892,7 @@ Seq2Seq 中的 Attention 机制是在 decode 过程中，逐步计算对应的�
     - 计算 BERT 模型的参数数量？
         - 词向量参数：vocab_size=30522, hidden_size=768, max_position_embedding=512, token_type_embedding=2，因此参数量为 (30522 + 512 + 2) * 768。
         - Multi-head Attention：len = hidden_size = 768, $d_k$ = $d_q$ = $d_v$ = $d_{model}/n_{head}$ = 768 / 12 = 64，将12个头进行拼接后还要进行线性变换，因此参数量为 768 * 64 * 12 * 3 + 768 * 768。
-        - 前馈网络参数：$\text{FFN}(x)=\max(0, xW_1+b_1)W_2 + b_2$，W_1 和 W_2 的参数量均为 768 * (768 * 4)，总参数量为 768 * 768 * 4 * 2。
+        - 前馈网络参数： $\text{FFN}(x)=\max(0, xW_1+b_1)W_2 + b_2$ ，W_1 和 W_2 的参数量均为 768 * (768 * 4)，总参数量为 768 * 768 * 4 * 2。
 
         总参数量 = 词向量参数 + 12 (层数) * (Multi-head + 前馈网络) = 110M
 
@@ -934,33 +930,27 @@ Seq2Seq 中的 Attention 机制是在 decode 过程中，逐步计算对应的�
 
     知识蒸馏的基本思想是使用一个大的训练好的模型来知道小模型更好的训练。TinyBERT 的基本思想是减少 Transformer 的层数以及降低 hidden_size 的大小。模型结构如下：
 
-    ![TinyBERT](imgs/TinyBERT.jpg)
+![TinyBERT](imgs/TinyBERT.jpg)
 
-    TinyBERT 的 loss 分为三部分：
+TinyBERT 的 loss 分为三部分：
 
-    - Embedding Layer Distillation
+- Embedding Layer Distillation
 
-        TinyBERT 的 embedding 大小比教师模型更小，因此需要通过一个维度变换矩阵来把学生模型的 embedding 映射到教师模型所在空间，再通过 MSE 来计算 loss：
-        $$
-            \mathcal{L}_{embd}= \text{MSE}(E^SW_e, E^T)
-        $$
+TinyBERT 的 embedding 大小比教师模型更小，因此需要通过一个维度变换矩阵来把学生模型的 embedding 映射到教师模型所在空间，再通过 MSE 来计算 loss：
+$$\mathcal{L}_{embd}= \text{MSE}(E^SW_e, E^T)$$
 
-    - Transformer Layer Distillation
+- Transformer Layer Distillation
 
-        TinyBERT 的知识蒸馏采取每隔 k 层蒸馏的方式。设 Teacher BERT 有 12 层，TinyBERT 有 4 层，则学生模型每隔 3 层就与教师模型计算一次 loss，其中，loss 又分为 Attention Loss 和 Hidden Loss：
+TinyBERT 的知识蒸馏采取每隔 k 层蒸馏的方式。设 Teacher BERT 有 12 层，TinyBERT 有 4 层，则学生模型每隔 3 层就与教师模型计算一次 loss，其中，loss 又分为 Attention Loss 和 Hidden Loss：
 
-        $$
-            \mathcal{L}_{attn} = \frac{1}{h}\sum_{i=1}^h \text{MSE}(A_i^S, A_i^T)
-        $$
-        其中，h 为 Attention 头数，$A_i\in \{A_q,A_k,A_v\}$。
+$$\mathcal{L}_{attn} = \frac{1}{h}\sum_{i=1}^h \text{MSE}(A_i^S, A_i^T)$$
 
-        $$
-            \mathcal{L}_{hidn} = \text{MSE}(H^SW_h, H^T)
-        $$
+其中，h 为 Attention 头数， $A_i\in \{A_q,A_k,A_v\}$。
 
-    - Prediction Layer Distillation
+$$\mathcal{L}_{hidn} = \text{MSE}(H^SW_h, H^T)$$
 
-        在预测层的 loss 计算取决于不同的具体任务，但都需要结合教师模型和学生模型的 loss。
+- Prediction Layer Distillation
+在预测层的 loss 计算取决于不同的具体任务，但都需要结合教师模型和学生模型的 loss。
 
 
 8. RoBERTa
