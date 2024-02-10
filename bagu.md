@@ -943,7 +943,9 @@ $$\mathcal{L}_{embd}= \text{MSE}(E^SW_e, E^T)$$
 
 TinyBERT 的知识蒸馏采取每隔 k 层蒸馏的方式。设 Teacher BERT 有 12 层，TinyBERT 有 4 层，则学生模型每隔 3 层就与教师模型计算一次 loss，其中，loss 又分为 Attention Loss 和 Hidden Loss：
 
-$$\mathcal{L}_{attn} = \frac{1}{h}\sum_{i=1}^h \text{MSE}(A_i^S, A_i^T)$$
+$$\mathcal{L}_{attn} = $$
+
+$$\frac{1}{h}\sum_{i=1}^h \text{MSE}(A_i^S, A_i^T)$$
 
 其中，h 为 Attention 头数， $A_i\in \{A_q,A_k,A_v\}$。
 
